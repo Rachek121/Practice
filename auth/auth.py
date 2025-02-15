@@ -1,10 +1,19 @@
+import os
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 from PyQt6.QtGui import QIcon
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QApplication
 from app.MainWin import MainWindow
+from database import Worker
 import sys
 
-true_username = "1"
-true_password = "1"
+
+db_directory = os.path.join(os.path.dirname(__file__), '..', 'db')
+DATABASE_URL = os.path.join(db_directory, "workers.db")
+
+
+engine = create_engine(f"sqlite:///{DATABASE_URL}")
+SessionLocal = sessionmaker(bind=engine)
 
 class LoginWindow(QWidget):
     def __init__(self):
@@ -39,20 +48,21 @@ class LoginWindow(QWidget):
         username = self.entry_username.text()
         password = self.entry_password.text()
 
-        if username == true_username and password == true_password:
-            QMessageBox.information(self, "Все верно", "Вход выполнен")
-            self.open_main_window()
-        else:
-            QMessageBox.critical(self, "Ошибка", "Неверный логин или пароль.")
+
+        session = SessionLocal()
+        try:
+            worker = session.query(Worker).filter_by(login=username, password=password).first()
+            if worker:
+                QMessageBox.information(self, "Все верно", f"Вход выполнен")
+                self.open_main_window()
+            else:
+                QMessageBox.critical(self, "Ошибка", "Неверный логин или пароль.")
+        except Exception as e:
+            QMessageBox.critical(self, "Ошибка", f"Ошибка доступа к базе данных: {e}")
+        finally:
+            session.close()
 
     def open_main_window(self):
         self.main_window = MainWindow()
         self.main_window.show()
         self.close()
-
-if __name__ == '__main__':
-    app = QApplication(sys.argv)
-
-    login_window = LoginWindow()
-    login_window.show()
-    sys.exit(app.exec())

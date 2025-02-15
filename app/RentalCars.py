@@ -12,8 +12,8 @@ class AddCarWindow(QWidget):
         self.label_name = QLabel("Название машины:")
         self.input_name = QLineEdit()
 
-        self.label_price = QLabel("Стоимость:")
-        self.input_price = QLineEdit()
+        self.label_client = QLabel("ID Клиента:")
+        self.input_client = QLineEdit()
 
         self.label_rental_duration = QLabel("Срок аренды (дни):")
         self.input_rental_duration = QSpinBox()
@@ -24,8 +24,8 @@ class AddCarWindow(QWidget):
 
         self.layout.addWidget(self.label_name)
         self.layout.addWidget(self.input_name)
-        self.layout.addWidget(self.label_price)
-        self.layout.addWidget(self.input_price)
+        self.layout.addWidget(self.label_client)
+        self.layout.addWidget(self.input_client)
         self.layout.addWidget(self.label_rental_duration)
         self.layout.addWidget(self.input_rental_duration)
         self.layout.addWidget(self.btn_add)
@@ -34,9 +34,8 @@ class AddCarWindow(QWidget):
 
     def add_car(self):
         name = self.input_name.text()
-        price = self.input_price.text()
+        client = self.input_client.text()
         rental_duration = self.input_rental_duration.value()
 
-
-        QMessageBox.information(self, "GAIJIN", f"Машина '{name}' добавлена на {rental_duration} дней!")
+        QMessageBox.information(self, "GAIJIN", f"Машина '{name}' добавлена для клиента '{client}' на {rental_duration} дней!")
         self.close()

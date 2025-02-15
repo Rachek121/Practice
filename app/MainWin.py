@@ -3,7 +3,8 @@ from PyQt6.QtWidgets import QWidget, QPushButton, QVBoxLayout, QApplication, QMa
 from PyQt6.QtGui import QIcon, QPixmap
 from app.SelectCarWin import CarWindow
 from app.AddClientWin import AddClientWindow
-from app.AddCarWin import AddCarWindow
+from app.RentalCars import AddCarWindow
+from app.RentalViewWin import RentalViewWindow
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -31,15 +32,16 @@ class MainWindow(QMainWindow):
 
         self.view_car_btn = QPushButton('Просмотреть машины')
         self.add_client_btn = QPushButton('Добавить клиента')
-        self.add_car_btn = QPushButton('Добавить машину')
+        self.add_car_btn = QPushButton('Добавить прокат для клиента')
+        self.view_rentals_btn = QPushButton('Просмотреть прокаты')
         self.cls_btn = QPushButton('Выйти')
-
 
         main_vl.addStretch()
 
         main_vl.addWidget(self.view_car_btn)
         main_vl.addWidget(self.add_client_btn)
         main_vl.addWidget(self.add_car_btn)
+        main_vl.addWidget(self.view_rentals_btn)
         main_vl.addWidget(self.cls_btn)
 
         main_vl.addStretch()
@@ -50,7 +52,12 @@ class MainWindow(QMainWindow):
         self.view_car_btn.clicked.connect(self.show_view_car_btn)
         self.add_client_btn.clicked.connect(self.show_add_client_win)
         self.add_car_btn.clicked.connect(self.show_add_car_win)
+        self.view_rentals_btn.clicked.connect(self.show_rental_view_win)
         self.cls_btn.clicked.connect(self.close)
+
+    def show_rental_view_win(self):
+        self.win_rental_view = RentalViewWindow()
+        self.win_rental_view.show()
 
     def show_view_car_btn(self):
         self.win_view_car = CarWindow()
