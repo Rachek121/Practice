@@ -1,7 +1,6 @@
 from PyQt6.QtGui import QIcon
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox
-from PyQt6.QtWidgets import QApplication
-from app.mainWin import MainWindow
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QLineEdit, QPushButton, QMessageBox, QApplication
+from app.MainWin import MainWindow
 import sys
 
 true_username = "1"
@@ -36,7 +35,6 @@ class LoginWindow(QWidget):
 
         self.setLayout(layout)
 
-
     def login(self):
         username = self.entry_username.text()
         password = self.entry_password.text()
@@ -52,8 +50,9 @@ class LoginWindow(QWidget):
         self.main_window.show()
         self.close()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     app = QApplication(sys.argv)
-    window = LoginWindow()
-    window.show()
+
+    login_window = LoginWindow()
+    login_window.show()
     sys.exit(app.exec())
