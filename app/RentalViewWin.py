@@ -27,7 +27,8 @@ class RentalViewWindow(QWidget):
         super().__init__()
 
         self.setWindowTitle("Просмотр прокатов")
-        self.setGeometry(100, 100, 400, 300)
+        self.setGeometry(100, 100, 380, 300)
+
         self.layout = QVBoxLayout()
 
         self.table = QTableWidget()
@@ -59,5 +60,10 @@ class RentalViewWindow(QWidget):
 
         session.close()
 
+        for column in range(4):
+            self.table.resizeColumnToContents(column)
+
         if len(cars) == 0:
             QMessageBox.information(self, "GAIJIN", "Нет доступных прокатов!")
+
+

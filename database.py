@@ -63,3 +63,12 @@ engine = create_engine(f"sqlite:///{DATABASE_URL}")
 Base.metadata.create_all(engine)
 
 SessionLocal = sessionmaker(bind=engine)
+
+
+
+
+
+DATABASE_URL = os.path.join(db_directory, "cars_info.db")
+
+Base = declarative_base()
+

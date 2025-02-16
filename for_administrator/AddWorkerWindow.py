@@ -21,7 +21,7 @@ class AddWorkerWindow(QWidget):
 
         self.label_password = QLabel("Пароль:")
         self.input_password = QLineEdit()
-        self.input_password.setEchoMode(QLineEdit.EchoMode.Password)  # Скрываем ввод пароля
+        self.input_password.setEchoMode(QLineEdit.EchoMode.Password)
 
         self.btn_add = QPushButton("Добавить")
         self.btn_add.clicked.connect(self.add_worker)

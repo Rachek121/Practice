@@ -8,7 +8,9 @@ from PyQt6.QtWidgets import QWidget, QLabel, QLineEdit, QPushButton, QVBoxLayout
 db_directory = os.path.join(os.path.dirname(__file__), '..', 'db')
 DATABASE_URL = os.path.join(db_directory, "rental_cars.db")
 
+
 Base = declarative_base()
+
 
 class Car(Base):
     __tablename__ = 'cars'
@@ -18,10 +20,12 @@ class Car(Base):
     client_id = Column(String, nullable=False)
     rental_duration = Column(Integer, nullable=False)
 
+
 engine = create_engine(f"sqlite:///{DATABASE_URL}")
 Base.metadata.create_all(engine)
 
 SessionLocal = sessionmaker(bind=engine)
+
 
 class AddCarWindow(QWidget):
     def __init__(self):
@@ -41,6 +45,7 @@ class AddCarWindow(QWidget):
         self.label_rental_duration = QLabel("Срок аренды (дни):")
         self.input_rental_duration = QSpinBox()
         self.input_rental_duration.setMinimum(1)  # Минимум 1 день
+        self.input_rental_duration.setMaximum(365)
 
         self.btn_add = QPushButton("Добавить")
         self.btn_add.clicked.connect(self.add_car)
@@ -60,10 +65,15 @@ class AddCarWindow(QWidget):
         client = self.input_client.text()
         rental_duration = self.input_rental_duration.value()
 
+        if not name or not client:
+            QMessageBox.warning(self, "Ошибка", "Пожалуйста, заполните все поля!")
+            return
+
         session = SessionLocal()
         new_car = Car(name=name, client_id=client, rental_duration=rental_duration)
         session.add(new_car)
         session.commit()
         session.close()
 
-        QMessageBox.information(self, "GAIJIN", f"Машина '{name}' добавлена для клиента '{client}' на {rental_duration} дней!")
+        QMessageBox.information(self, "Успешно", f"Машина '{name}' добавлена для клиента '{client}' на {rental_duration} дней!")
+        self.close()
