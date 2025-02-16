@@ -1,20 +1,16 @@
 import os
-from PyQt6 import QtWidgets, QtCore
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QPushButton, QTableWidget, QTableWidgetItem, QMessageBox
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String
 
-# Установка директории для базы данных
-db_directory = os.path.join(os.path.dirname(__file__), 'db')
-os.makedirs(db_directory, exist_ok=True)
+
+db_directory = os.path.join(os.path.dirname(__file__), '..', 'db')
 DATABASE_URL = os.path.join(db_directory, "rental_cars.db")
 
-# Определяем базу данных
 Base = declarative_base()
 
-
-# Определяем модель для таблицы 'cars'
 class Car(Base):
     __tablename__ = 'cars'
 
@@ -23,39 +19,45 @@ class Car(Base):
     client_id = Column(String, nullable=False)
     rental_duration = Column(Integer, nullable=False)
 
-
-# Создаем движок и сессию
 engine = create_engine(f"sqlite:///{DATABASE_URL}")
 SessionLocal = sessionmaker(bind=engine)
 
-
-class RentalViewApp(QtWidgets.QWidget):
+class RentalViewWindow(QWidget):
     def __init__(self):
         super().__init__()
 
-        self.setWindowTitle("Rental Cars Information")
-        self.setGeometry(100, 100, 600, 400)
+        self.setWindowTitle("Просмотр прокатов")
+        self.setGeometry(100, 100, 400, 300)
+        self.layout = QVBoxLayout()
 
-        self.layout = QtWidgets.QVBoxLayout()
+        self.table = QTableWidget()
+        self.table.setColumnCount(4)
+        self.table.setHorizontalHeaderLabels(["ID", "Название машины", "ID Клиента", "Срок аренды (дни)"])
 
-        self.table = QtWidgets.QTableWidget()
+        self.btn_refresh = QPushButton("Обновить")
+        self.btn_refresh.clicked.connect(self.load_cars)
+
         self.layout.addWidget(self.table)
+        self.layout.addWidget(self.btn_refresh)
 
         self.setLayout(self.layout)
 
-        self.load_data()
+        self.load_cars()
 
-    def load_data(self):
+    def load_cars(self):
         session = SessionLocal()
         cars = session.query(Car).all()
-        self.table.setRowCount(len(cars))
-        self.table.setColumnCount(4)
-        self.table.setHorizontalHeaderLabels(["ID", "Name", "Client ID", "Rental Duration (days)"])
 
-        for row_idx, car in enumerate(cars):
-            self.table.setItem(row_idx, 0, QtWidgets.QTableWidgetItem(str(car.id)))
-            self.table.setItem(row_idx, 1, QtWidgets.QTableWidgetItem(car.name))
-            self.table.setItem(row_idx, 2, QtWidgets.QTableWidgetItem(car.client_id))
-            self.table.setItem(row_idx, 3, QtWidgets.QTableWidgetItem(str(car.rental_duration)))
+        self.table.setRowCount(len(cars))
+        row_index = 0
+        for car in cars:
+            self.table.setItem(row_index, 0, QTableWidgetItem(str(car.id)))
+            self.table.setItem(row_index, 1, QTableWidgetItem(car.name))
+            self.table.setItem(row_index, 2, QTableWidgetItem(car.client_id))
+            self.table.setItem(row_index, 3, QTableWidgetItem(str(car.rental_duration)))
+            row_index += 1
 
         session.close()
+
+        if len(cars) == 0:
+            QMessageBox.information(self, "GAIJIN", "Нет доступных прокатов!")
